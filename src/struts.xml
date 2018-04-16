@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+	
+	<struts>
+	
+	<!-- 
+	### if specified, the default object factory can be overridden here
+	### Note: short-hand notation is supported in some cases, such as "spring"
+	###       Alternatively, you can provide a com.opensymphony.xwork2.ObjectFactory subclass name here
+	# struts.objectFactory = spring		//将action的创建交给Spring
+
+	### specifies the autoWiring logic when using the SpringObjectFactory.
+	### valid values are: name, type, auto, and constructor (name is the default)
+	struts.objectFactory.spring.autoWire = name	//spring负责自动装配action的依赖属性
+	 -->
+	<constant name="struts.objectFactory" value="spring"></constant>
+	<!-- 
+	整合方案1
+	<action name="UserAction_*" class="cn.itcast.web.action.UserAction" method="{1}">
+			<result name="success">/success.jsp</result>
+	</action>
+	class属性依旧填完整类名，有struts自己创建Action对象，属性交由Spring注入，不推荐，因为没能用到Spring的对象管理容器
+	
+	整合方案2
+	<action name="UserAction_*" class="userAction" method="{1}">
+			<result name="success">/success.jsp</result>
+	</action>
+	class属性，填在Spring中注入的name值，声明周期交给Spring管理
+	注意，属性需要手动注入，需要在bean中配置property属性
+		<property name="userService" ref="userService"></property>
+		Action属性需要配置  scope="prototype"  因为struts是多例的，每次都是创建新对象
+	 -->
+	<package name="userSp" namespace="/" extends="struts-default">
+	<global-exception-mappings>
+		<exception-mapping result="error" exception="java.lang.RuntimeException"></exception-mapping>
+	</global-exception-mappings>
+	
+	
+		<action name="UserAction_*" class="userAction" method="{1}">
+			<result name="toHome" type="redirect">/index.htm</result>
+			<result name="error" >/login.jsp</result>
+		</action>
+		
+		<action name="CustomerAction_*" class="customerAction" method="{1}">
+			<result name="list" >/jsp/customer/list.jsp</result>
+		</action>
+		
+	</package>
+	
+	</struts>
